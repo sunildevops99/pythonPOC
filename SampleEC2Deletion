@@ -1,8 +1,8 @@
 import boto3
 
 
-ec2 = boto3.resource('ec2', aws_access_key_id='AKIAJS56NWMD7JBAE5HQ',
-                     aws_secret_access_key='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',
+ec2 = boto3.resource('ec2', aws_access_key_id='',
+                     aws_secret_access_key='',
                      region_name='ap-south-2')
 
 # Terminate instance
