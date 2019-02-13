@@ -1,18 +1,18 @@
 __author__="Sunil.Katta"
 import boto3
-from src.S3Storage import CreateS3Bucket
-from src.EC2Connection import CreateEc2Instance
-from src.EC2Connection import TerminateEc2Instance
+from CreateS3Bucket import CreateS3Bucket
+from CreateEc2Instance import CreateEc2Instance
+from TerminateEc2Instance import TerminateEc2Instance
 
 def main():
     service_type = 'ec2'
-    aws_access_key_id = 'ABCD'
-    aws_secret_access_key = 'ABCD'
+    aws_access_key_id = 'AKIAIWWFDXVQ4F5BBCGA'
+    aws_secret_access_key = '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'
     region_name='ap-south-1'
-    user='testuser'
+    user='sunilkatta'
     bucket_name='testbucket'
     instanceCreation = CreateEc2Instance(service_type,aws_access_key_id,aws_secret_access_key,region_name)
-    instanceName=instanceCreation.createinstance()
+    instanceName=instanceCreation.createinstance('ami-0cc9e8224c8c40674','t2.micro')
     if instanceName =='FAILURE':
         print('Problem in Creating EC2 Instance')
     else:
