@@ -1,57 +1,81 @@
 import boto3
 
-# http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#service-resource
-# AWS_ACCESS_KEY_ID
-# AWS_SECRET_ACCESS_KEY
+def main():
+    service_type = 'ec2'
+    aws_access_key_id = 'ABCD'
+    aws_secret_access_key = 'ABCD'
+    region_name='ap-south-1'
+    instanceCreation = Ec2InstanceCreation(service_type,aws_access_key_id,aws_secret_access_key,region_name)
+    instanceName=instanceCreation.createinstance()
+    if instanceName =='FAILURE':
+        print('Problem in Creating EC2 Instance')
+    else:
+        print('EC2 Instance Created Successfully : ' + instanceName)
 
-ec2 = boto3.resource('ec2', aws_access_key_id='AWS_ACCESS_KEY_ID',
-                     aws_secret_access_key='AWS_SECRET_ACCESS_KEY',
-                     region_name='ap-south-2')
 
-# create VPC
-vpc = ec2.create_vpc(CidrBlock='192.168.0.0/16')
-# we can assign a name to vpc, or any resource, by using tag
-vpc.create_tags(Tags=[{"Key": "Name", "Value": "default_vpc"}])
-vpc.wait_until_available()
-print(vpc.id)
+class Ec2InstanceCreation:
+    def __init__(self,service_type,aws_access_key_id,aws_secret_access_key,region_name):
+        self.service_type=service_type
+        self.aws_access_key_id=aws_access_key_id
+        self.aws_access_key_id=aws_access_key_id
+        self.aws_secret_access_key=aws_secret_access_key
+        self.region_name=region_name
 
-# create then attach internet gateway
-ig = ec2.create_internet_gateway()
-vpc.attach_internet_gateway(InternetGatewayId=ig.id)
-print(ig.id)
+    def createinstance(self):
+        #ec2 = boto3.resource('ec2', aws_access_key_id='AWS_ACCESS_KEY_ID',
+         #                    aws_secret_access_key='AWS_SECRET_ACCESS_KEY',
+          #                   region_name='ap-south-2')
+        ec2 = boto3.resource(self.service_type, self.aws_access_key_id,
+                             self.aws_secret_access_key, self.region_name)
 
-# create a route table and a public route
-route_table = vpc.create_route_table()
-route = route_table.create_route(
-    DestinationCidrBlock='0.0.0.0/0',
-    GatewayId=ig.id
-)
-print(route_table.id)
+        # create VPC
+        vpc = ec2.create_vpc(CidrBlock='192.168.0.0/16')
+        # we can assign a name to vpc, or any resource, by using tag
+        vpc.create_tags(Tags=[{"Key": "Name", "Value": "default_vpc"}])
+        vpc.wait_until_available()
+        print(vpc.id)
 
-# create subnet
-subnet = ec2.create_subnet(CidrBlock='192.168.1.0/24', VpcId=vpc.id)
-print(subnet.id)
+        # create then attach internet gateway
+        ig = ec2.create_internet_gateway()
+        vpc.attach_internet_gateway(InternetGatewayId=ig.id)
+        print(ig.id)
 
-# associate the route table with the subnet
-route_table.associate_with_subnet(SubnetId=subnet.id)
+        # create a route table and a public route
+        route_table = vpc.create_route_table()
+        route = route_table.create_route(
+            DestinationCidrBlock='0.0.0.0/0',
+            GatewayId=ig.id
+        )
+        print(route_table.id)
 
-# Create sec group
-sec_group = ec2.create_security_group(
-    GroupName='slice_0', Description='slice_0 sec group', VpcId=vpc.id)
-sec_group.authorize_ingress(
-    CidrIp='0.0.0.0/0',
-    IpProtocol='icmp',
-    FromPort=-1,
-    ToPort=-1
-)
-print(sec_group.id)
+        # create subnet
+        subnet = ec2.create_subnet(CidrBlock='192.168.1.0/24', VpcId=vpc.id)
+        print(subnet.id)
 
-# find image id ami-0cc9e8224c8c40674 / ap-south-2
-# Create instance
-# Add New Volume
-# Server details : (AMI Details, Instance Type, Security Groups, Instance Details, Storage, Tags)
-instances = ec2.create_instances(
-    ImageId='ami-835b4efa', InstanceType='t2.micro', MaxCount=1, MinCount=1,
-    NetworkInterfaces=[{'SubnetId': subnet.id, 'DeviceIndex': 0, 'AssociatePublicIpAddress': True, 'Groups': [sec_group.group_id]}])
-instances[0].wait_until_running()
-print(instances[0].id)
+        # associate the route table with the subnet
+        route_table.associate_with_subnet(SubnetId=subnet.id)
+
+        # Create sec group
+        sec_group = ec2.create_security_group(
+            GroupName='sampleGroup', Description='sampleGroup', VpcId=vpc.id)
+        sec_group.authorize_ingress(
+            CidrIp='0.0.0.0/0',
+            IpProtocol='icmp',
+            FromPort=-1,
+            ToPort=-1
+        )
+        print(sec_group.id)
+
+        # Create instance
+        # Reference Server details : (AMI Details, Instance Type, Security Groups, Instance Details, Storage, Tags)
+        instances = ec2.create_instances(
+            ImageId='ami-835b4efa', InstanceType='t2.micro', MaxCount=1, MinCount=1,
+            NetworkInterfaces=[{'SubnetId': subnet.id, 'DeviceIndex': 0, 'AssociatePublicIpAddress': True,
+                                'Groups': [sec_group.group_id]}])
+        instances[0].wait_until_running()
+        print(instances[0].id)
+        return instances[0].id
+
+
+if __name__ == "__main__":
+    main()
