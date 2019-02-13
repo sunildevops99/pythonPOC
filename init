@@ -1,0 +1,31 @@
+__author__="Sunil.Katta"
+import boto3
+from src.S3Storage import CreateS3Bucket
+from src.EC2Connection import CreateEc2Instance
+from src.EC2Connection import TerminateEc2Instance
+
+def main():
+    service_type = 'ec2'
+    aws_access_key_id = 'ABCD'
+    aws_secret_access_key = 'ABCD'
+    region_name='ap-south-1'
+    user='testuser'
+    bucket_name='testbucket'
+    instanceCreation = CreateEc2Instance(service_type,aws_access_key_id,aws_secret_access_key,region_name)
+    instanceName=instanceCreation.createinstance()
+    if instanceName =='FAILURE':
+        print('Problem in Creating EC2 Instance')
+    else:
+        print('EC2 Instance Created Successfully : ' + instanceName)
+
+    bucketInstance = CreateS3Bucket('iam',aws_access_key_id, aws_secret_access_key, region_name, user)
+    user_arn=bucketInstance.get_account_id()
+    if user_arn=='FAILURE':
+        print("Issue in retrieving ARN")
+    else:
+        bucket_details=bucketInstance.createBucket(bucket_name,user_arn)
+        print("Bucket Created : "+bucket_details)
+
+
+if __name__ == "__main__":
+    main()
