@@ -1,0 +1,22 @@
+import boto3
+
+
+ec2 = boto3.resource('ec2', aws_access_key_id='AKIAJS56NWMD7JBAE5HQ',
+                     aws_secret_access_key='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',
+                     region_name='ap-south-2')
+
+# Terminate instance
+instance = ec2.Instance("")
+instance.terminate()
+
+# delete sec group
+sec_group2 = ec2.SecurityGroup("")
+sec_group2.delete()
+
+# delete subnet
+subnet2 = ec2.Subnet("")
+subnet2.delete()
+
+# delete vpc
+vpc2 = ec2.Vpc("")
+vpc2.delete()
