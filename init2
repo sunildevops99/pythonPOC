@@ -1,0 +1,34 @@
+__author__="Sunil.Katta"
+import boto3
+from CreateS3Bucket import CreateS3Bucket
+from CreateEc2Instance import CreateEc2Instance
+from TerminateEc2Instance import TerminateEc2Instance
+
+def main():
+    service_type = 'ec2'
+    aws_access_key_id = 'AKIAJ6LCMDUDI4NH4NUQ'
+    aws_secret_access_key = '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'
+    region_name='ap-south-1'
+    user='pythonuser'
+    bucket_name='sunilkatta'
+
+    #Bucket Creation
+    bucketInstance = CreateS3Bucket('s3', aws_access_key_id, aws_secret_access_key, region_name, user)
+    bucket_details = bucketInstance.createBucket(bucket_name)
+    upload_file = bucketInstance.uploadFile(bucket_name)
+    print("Upload Status : " + upload_file)
+
+    #EC2 Instance Creation
+    instanceCreation = CreateEc2Instance(service_type,aws_access_key_id,aws_secret_access_key,region_name)
+    #ami-0070c350a7033e56c
+    instanceName=instanceCreation.createinstance('ami-04fd2380b0f5c3c1f','t2.micro')
+    if instanceName =='FAILURE':
+       print('Problem in Creating EC2 Instance')
+    else:
+        print('EC2 Instance Created Successfully : ' + instanceName)
+
+
+
+
+if __name__ == "__main__":
+    main()
