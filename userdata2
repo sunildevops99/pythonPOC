@@ -1,0 +1,19 @@
+<powershell>
+mkdir "c:\aws\download"
+Set-Location "c:\aws\download"
+$wc = New-Object System.Net.WebClient
+#Download agent form S3 bucket
+#Replace S3 URL below
+$myurl="https://<S3_bucket_path>/sdcssa_agent_windows2012r2_package.zip"
+$wc.DownloadFile("$myurl","c:\aws\download\sdcssa_agent_windows_package.zip")
+#UNZIP agent zip download
+Set-Location "c:\aws\download"
+$shell_app=new-object -com shell.application
+$zip_file = $shell_app.namespace("c:\aws\download\sdcssa_agent_windows_package.zip");
+$destination = $shell_app.namespace((Get-Location).Path)
+$destination.Copyhere($zip_file.items(),0x14)
+#INSTALL agent
+Start-Process "c:\aws\download\installagent.bat"
+#Restart 
+#Restart-Computer
+</powershell>
