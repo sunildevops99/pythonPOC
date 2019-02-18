@@ -26,41 +26,26 @@ class CreateS3Bucket:
             print("Error in getting user details : "+err)
             return "FAILURE"
 
-    def createBucket(self, bucket_name,user_arn):
-        s3 = boto3.resource('s3')
-        bucket = s3.create_bucket(Bucket=bucket_name)
-        bucket_policy = bucket.Policy()
+    def createBucket(self, bucket_name):
+        s3 = boto3.resource(self.service_type,aws_access_key_id=self.aws_access_key_id,
+                                 aws_secret_access_key=self.aws_secret_access_key)
+        bucket = s3.create_bucket(ACL='public-read-write',Bucket=bucket_name,CreateBucketConfiguration={'LocationConstraint':'ap-south-1'})
 
-        s3_permissions_policy = json.dumps({
-            "Statement": [{
-                "Sid": "PublicReadForGetBucketObjects",
-                "Effect": "Allow",
-                "Principal": {"AWS": "*"},
-                "Action": ["s3:GetObject"],
-                "Resource":["arn:aws:s3:::%s/*" % bucket_name]
-            }, {
-                "Action": "s3:*",
-                "Effect": "Allow",
-                "Resource": [
-                    "arn:aws:s3:::%s" % bucket_name,
-                    "arn:aws:s3:::%s/*" % bucket_name
-                ],
-                "Principal": {"AWS": [user_arn]}
-            }]
-        })
+        for i in s3.buckets.all():
+            print(i.name);
 
-        bucket_policy.put(Policy=s3_permissions_policy)
-
-        # Add cors configuration
-        cors_config = {
-            'CORSRules': [
-                {
-                    'AllowedMethods': ['GET'],
-                    'AllowedOrigins': ['*']
-                }
-            ]
-        }
-        cors = bucket.Cors()
-        cors.put(CORSConfiguration=cors_config)
         print("Bucket Name: %s" % bucket.name)
         return bucket.name
+
+    def uploadFile(self, bucket_name):
+
+        try:
+            s3=boto3.client(self.service_type,aws_access_key_id=self.aws_access_key_id,
+                                 aws_secret_access_key=self.aws_secret_access_key)
+            s3.upload_file('sunilkatta.txt',bucket_name,'sunil.txt')
+            return "SUCCESS"
+        except Exception as err:
+            print("FAILURE : "+err)
+            return "FAILURE"
+        #bucket = s3.create_bucket(ACL='public-read-write',Bucket=bucket_name,CreateBucketConfiguration={'LocationConstraint':'ap-south-1'})
+
