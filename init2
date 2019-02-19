@@ -6,8 +6,8 @@ from TerminateEc2Instance import TerminateEc2Instance
 
 def main():
     service_type = 'ec2'
-    aws_access_key_id = 'AKIAJ6LCMDUDI4NH4NUQ'
-    aws_secret_access_key = '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'
+    aws_access_key_id = ''
+    aws_secret_access_key = ''
     region_name='ap-south-1'
     user='pythonuser'
     bucket_name='sunilkatta'
