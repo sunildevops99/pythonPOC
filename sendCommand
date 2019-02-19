@@ -1,0 +1,18 @@
+    def sendcommand(self):
+        ssm_client = boto3.client('ssm', aws_access_key_id=self.aws_access_key_id,
+                             aws_secret_access_key=self.aws_secret_access_key, region_name=self.region_name)  # use region code in which you are working
+        response = ssm_client.send_command(
+            InstanceIds=["i-08b6553cbfa4ef149"],
+            DocumentName="AWS-RunPowerShellScript",
+            Parameters={
+                'commands': [
+                    'ipconfig',
+                ]
+            }
+        )
+        command_id = response['Command']['CommandId'],
+        output = ssm_client.get_command_invocation(
+        CommandId = command_id,
+        InstanceId = 'i-061876597833e56d4')
+        print(output)
+        return output
