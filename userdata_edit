@@ -1,0 +1,10 @@
+$configFile = "C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
+[xml] $xdoc = get-content $configFile
+$xdoc.SelectNodes("//Plugin") |?{ $_.Name -eq "Ec2HandleUserData"} |%{ $_.State = "Enabled" }
+$xdoc.SelectNodes("//Plugin") |?{ $_.Name -eq "Ec2SetComputerName"} |%{ $_.State = "Enabled" }
+$xdoc.OuterXml | Out-File -Encoding UTF8 $configFile
+
+$configFile = "C:\\Program Files\\Amazon\\Ec2ConfigService\\Settings\\BundleConfig.xml"
+[xml] $xdoc = get-content $configFile
+$xdoc.SelectNodes("//Property") |?{ $_.Name -eq "AutoSysprep"} |%{ $_.Value = "Yes" }
+$xdoc.OuterXml | Out-File -Encoding UTF8 $configFile
