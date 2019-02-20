@@ -1,30 +1,49 @@
 __author__="Sunil.Katta"
 import boto3
+import time
 from CreateS3Bucket import CreateS3Bucket
 from CreateEc2Instance import CreateEc2Instance
 from TerminateEc2Instance import TerminateEc2Instance
 
 def main():
     service_type = 'ec2'
-    aws_access_key_id = 'AKIAIWWFDXVQ4F5BBCGA'
-    aws_secret_access_key = '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'
+    aws_access_key_id = ''
+    aws_secret_access_key = ''
     region_name='ap-south-1'
-    user='sunilkatta'
-    bucket_name='testbucket'
+    user='ithted@bglr'
+    bucket_name='quest-ge-peptool-s3-bucket'
+
+    #Bucket Creation
+    bucketInstance = CreateS3Bucket('s3', aws_access_key_id, aws_secret_access_key, region_name, user)
+    bucket_details = bucketInstance.createBucket(bucket_name)
+    upload_file = bucketInstance.uploadFile(bucket_name)
+    print("Upload Status : " + upload_file)
+
+    #EC2 Instance Creation
     instanceCreation = CreateEc2Instance(service_type,aws_access_key_id,aws_secret_access_key,region_name)
-    instanceName=instanceCreation.createinstance('ami-0cc9e8224c8c40674','t2.micro')
+    #ami-0070c350a7033e56c ami-0437fea2a5ba5aacd  ami-03ae7175d7db12ed9
+    instanceName=instanceCreation.createinstance('ami-03ae7175d7db12ed9','t2.micro')
     if instanceName =='FAILURE':
-        print('Problem in Creating EC2 Instance')
+       print('Problem in Creating EC2 Instance')
     else:
         print('EC2 Instance Created Successfully : ' + instanceName)
 
-    bucketInstance = CreateS3Bucket('iam',aws_access_key_id, aws_secret_access_key, region_name, user)
-    user_arn=bucketInstance.get_account_id()
-    if user_arn=='FAILURE':
-        print("Issue in retrieving ARN")
-    else:
-        bucket_details=bucketInstance.createBucket(bucket_name,user_arn)
-        print("Bucket Created : "+bucket_details)
+    time.sleep(80)
+
+    # Directory Creation
+    directoryCommand = 'new-item c:\GESIM\PEP -itemtype directory'
+    directoryOutput = instanceCreation.sendcommand(instanceName, directoryCommand)
+    print(directoryOutput)
+
+    # Download Data from s3 bucket to local drive
+    downloadCommand = 'cscript.exe C:\/aws\scripts\download\s3Sync.vbs'
+    serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
+    print(downloadCommand)
+
+    # Starting Syncing Service from local drive to s3 bucket
+    serviceCommand = 'powershell.exe C:\/aws/scripts\S3BucketSyncing.ps1'
+    serviceOutput = instanceCreation.sendcommand(instanceName, serviceCommand)
+    print(serviceOutput)
 
 
 if __name__ == "__main__":
