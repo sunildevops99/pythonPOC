@@ -22,7 +22,7 @@ class CreateEc2Instance:
         try:
             vpc = ec2.create_vpc(CidrBlock='192.168.0.0/16')
             # we can assign a name to vpc, or any resource, by using tag
-            vpc.create_tags(Tags=[{"Key": "Name", "Value": "default_vpc"}])
+            vpc.create_tags(Tags=[{"Key": "Name", "Value": "pythonBoto3"}])
             vpc.wait_until_available()
             print(vpc.id)
         except Exception as err:
@@ -60,12 +60,13 @@ class CreateEc2Instance:
         # Create sec group
         try:
             sec_group = ec2.create_security_group(
-                GroupName='sampleGroup', Description='sampleGroup', VpcId=vpc.id)
+                GroupName='pythonBoto3', Description='pythonBoto3', VpcId=vpc.id)
             sec_group.authorize_ingress(
                 CidrIp='0.0.0.0/0',
                 IpProtocol='icmp',
                 FromPort=-1,
                 ToPort=-1
+
             )
             print(sec_group.id)
         except Exception as err:
@@ -76,11 +77,46 @@ class CreateEc2Instance:
         #Sample AMI : 'ami-835b4efa'
         try:
             instances = ec2.create_instances(
-                ImageId=ami_id, InstanceType=instance_type, MaxCount=1, MinCount=1,
-                NetworkInterfaces=[{'SubnetId': subnet.id, 'DeviceIndex': 0, 'AssociatePublicIpAddress': True,
-                                    'Groups': [sec_group.group_id]}])
+                ImageId=ami_id,
+                InstanceType=instance_type,
+                MaxCount=1,
+                MinCount=1,
+                KeyName='pythonBoto',
+                IamInstanceProfile={
+                    #'Arn': 'arn:aws:iam::437064189948:instance-profile/Boto3'
+                    'Arn': 'arn:aws:iam::993565152044:instance-profile/pythonBoto3'
+                },
+                NetworkInterfaces=[{'SubnetId': subnet.id,
+                                    'DeviceIndex': 0,
+                                    'AssociatePublicIpAddress': True,
+                                    'Groups': [sec_group.group_id]
+                                    }
+                                   ]
+                #BlockDeviceMappings=[
+                #    {
+                #        'DeviceName': '/dev/sda1',
+                #        'Ebs': {
+                #            'VolumeSize': 20,
+                #            'VolumeType': 'gp2'
+                #        }
+                #    }
+                #]
+            )
         except Exception as err:
             return "Exception in Creating VPC" + err
         instances[0].wait_until_running()
         print(instances[0].id)
         return instances[0].id
+    def sendcommand(self,instanceid,commandexecution):
+        ssm_client = boto3.client('ssm', aws_access_key_id=self.aws_access_key_id,
+                             aws_secret_access_key=self.aws_secret_access_key, region_name=self.region_name)  # use region code in which you are working
+        response = ssm_client.send_command(
+            InstanceIds=[instanceid],
+            DocumentName="AWS-RunPowerShellScript",
+            Parameters={
+                'commands': [
+                    commandexecution,
+                ]
+            }
+        )
+        return "SUCCESS"
