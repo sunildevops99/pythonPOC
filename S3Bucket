@@ -31,8 +31,8 @@ class CreateS3Bucket:
                                  aws_secret_access_key=self.aws_secret_access_key)
         bucket = s3.create_bucket(ACL='public-read-write',Bucket=bucket_name,CreateBucketConfiguration={'LocationConstraint':'ap-south-1'})
 
-        for i in s3.buckets.all():
-            print(i.name);
+        #for i in s3.buckets.all():
+         #   print(i.name);
 
         print("Bucket Name: %s" % bucket.name)
         return bucket.name
