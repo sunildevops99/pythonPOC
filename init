@@ -39,6 +39,13 @@ def main():
     downloadCommand = 'cscript.exe C:\/aws\scripts\download\s3Sync.vbs'
     serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
     print(downloadCommand)
+    
+    # Download Data from s3 bucket to local drive
+    #fromBucket = 's3://sunilkatta'
+    #toLocalDrive = 'C:\GESIM'
+    #downloadCommand = 'cscript.exe C:\/aws\scripts\download\syncs3bucketDownload.vbs ' + fromBucket + ' ' + toLocalDrive
+    #serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
+    #print(downloadCommand)
 
     # Starting Syncing Service from local drive to s3 bucket
     serviceCommand = 'powershell.exe C:\/aws/scripts\S3BucketSyncing.ps1'
