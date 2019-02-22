@@ -10,45 +10,41 @@ def main():
     aws_access_key_id = ''
     aws_secret_access_key = ''
     region_name='ap-south-1'
-    user='ithted@bglr'
-    bucket_name='quest-ge-peptool-s3-bucket'
+    user='pythonuser'
+    bucketname='quest-ge-peptool-s3-bucket'
 
     #Bucket Creation
     bucketInstance = CreateS3Bucket('s3', aws_access_key_id, aws_secret_access_key, region_name, user)
-    bucket_details = bucketInstance.createBucket(bucket_name)
-    upload_file = bucketInstance.uploadFile(bucket_name)
+    bucket_details = bucketInstance.createBucket(bucketname)
+    upload_file = bucketInstance.uploadFile(bucketname)
     print("Upload Status : " + upload_file)
 
     #EC2 Instance Creation
     instanceCreation = CreateEc2Instance(service_type,aws_access_key_id,aws_secret_access_key,region_name)
-    #ami-0070c350a7033e56c ami-0437fea2a5ba5aacd  ami-03ae7175d7db12ed9
-    instanceName=instanceCreation.createinstance('ami-03ae7175d7db12ed9','t2.micro')
+    # customized AMI details : ami-0176cc5b04ec37632
+    instanceName=instanceCreation.createinstance('ami-0176cc5b04ec37632','t2.micro')
     if instanceName =='FAILURE':
        print('Problem in Creating EC2 Instance')
     else:
         print('EC2 Instance Created Successfully : ' + instanceName)
 
     time.sleep(80)
-
+    newDirectory='D:\GESIM\PEP'
     # Directory Creation
-    directoryCommand = 'new-item c:\GESIM\PEP -itemtype directory'
+    directoryCommand = 'new-item '+newDirectory+' -itemtype directory'
     directoryOutput = instanceCreation.sendcommand(instanceName, directoryCommand)
     print(directoryOutput)
 
     # Download Data from s3 bucket to local drive
-    downloadCommand = 'cscript.exe C:\/aws\scripts\download\s3Sync.vbs'
-    serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
-    print(downloadCommand)
-    
-    # Download Data from s3 bucket to local drive
     #fromBucket = 's3://sunilkatta'
     #toLocalDrive = 'C:\GESIM'
-    #downloadCommand = 'cscript.exe C:\/aws\scripts\download\syncs3bucketDownload.vbs ' + fromBucket + ' ' + toLocalDrive
-    #serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
-    #print(downloadCommand)
+    downloadCommand = 'cscript.exe D:\/PEPToolAWS\scripts\download\syncs3bucketDownload.vbs  s3://' +bucketname+ ' ' + newDirectory
+    serviceOutput = instanceCreation.sendcommand(instanceName, downloadCommand)
+    print(downloadCommand)
 
     # Starting Syncing Service from local drive to s3 bucket
-    serviceCommand = 'powershell.exe C:\/aws/scripts\S3BucketSyncing.ps1'
+    serviceCommand = 'powershell.exe D:\/PEPToolAWS/scripts\S3BucketSyncing.ps1 ' +'-location '+ newDirectory + '  -s3bucket s3://'+bucketname
+    #serviceCommand = 'powershell.exe D:\/PEPToolAWS/scripts\S3BucketSyncing.ps1'
     serviceOutput = instanceCreation.sendcommand(instanceName, serviceCommand)
     print(serviceOutput)
 
