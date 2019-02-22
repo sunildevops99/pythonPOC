@@ -8,13 +8,11 @@ class CreateEc2Instance:
         self.aws_access_key_id=aws_access_key_id
         self.aws_secret_access_key=aws_secret_access_key
         self.region_name=region_name
-        print('Class')
 
     def createinstance(self,ami_id,instance_type):
         #ec2 = boto3.resource('ec2', aws_access_key_id='AWS_ACCESS_KEY_ID',
          #                    aws_secret_access_key='AWS_SECRET_ACCESS_KEY',
           #                   region_name='ap-south-2')
-        print('createinstance'+self.service_type)
         ec2 = boto3.resource(self.service_type, aws_access_key_id=self.aws_access_key_id,
                              aws_secret_access_key=self.aws_secret_access_key, region_name=self.region_name)
 
@@ -24,7 +22,7 @@ class CreateEc2Instance:
             # we can assign a name to vpc, or any resource, by using tag
             vpc.create_tags(Tags=[{"Key": "Name", "Value": "pythonBoto3"}])
             vpc.wait_until_available()
-            print(vpc.id)
+            print("VPC has been created : "+vpc.id)
         except Exception as err:
             return "Exception in Creating VPC"+err
 
@@ -32,7 +30,7 @@ class CreateEc2Instance:
         try:
             ig = ec2.create_internet_gateway()
             vpc.attach_internet_gateway(InternetGatewayId=ig.id)
-            print(ig.id)
+            print("Internet Gateway has been created : "+ig.id)
         except Exception as err:
             return "Exception in Creating VPC" + err
 
@@ -43,7 +41,7 @@ class CreateEc2Instance:
                 DestinationCidrBlock='0.0.0.0/0',
                 GatewayId=ig.id
             )
-            print(route_table.id)
+            print("Routing Table has been created : "+route_table.id)
         except Exception as err:
             return "Exception in Creating VPC"+err
 
@@ -68,7 +66,7 @@ class CreateEc2Instance:
                 ToPort=-1
 
             )
-            print(sec_group.id)
+            #print(sec_group.id)
         except Exception as err:
             return "Exception in Creating VPC"+err
 
@@ -81,10 +79,10 @@ class CreateEc2Instance:
                 InstanceType=instance_type,
                 MaxCount=1,
                 MinCount=1,
-                KeyName='pythonBoto',
+                KeyName='sunilkatta',
                 IamInstanceProfile={
-                    #'Arn': 'arn:aws:iam::437064189948:instance-profile/Boto3'
-                    'Arn': 'arn:aws:iam::993565152044:instance-profile/pythonBoto3'
+                    'Arn': 'arn:aws:iam::437064189948:instance-profile/Boto3'
+                    #'Arn': 'arn:aws:iam::993565152044:instance-profile/pythonBoto3'
                 },
                 NetworkInterfaces=[{'SubnetId': subnet.id,
                                     'DeviceIndex': 0,
@@ -105,8 +103,9 @@ class CreateEc2Instance:
         except Exception as err:
             return "Exception in Creating VPC" + err
         instances[0].wait_until_running()
-        print(instances[0].id)
+        #print(instances[0].id)
         return instances[0].id
+
     def sendcommand(self,instanceid,commandexecution):
         ssm_client = boto3.client('ssm', aws_access_key_id=self.aws_access_key_id,
                              aws_secret_access_key=self.aws_secret_access_key, region_name=self.region_name)  # use region code in which you are working
