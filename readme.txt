@@ -4,3 +4,4 @@ Arguments=StartMonitoring.ps1
 
 
 https://stephenmann.io/post/continuous-delivery-with-beanstalk-codepipeline-and-terraform/
+http://microservices.today/CI-CD-Solution-with-AWS/
