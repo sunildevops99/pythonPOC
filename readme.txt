@@ -5,3 +5,5 @@ Arguments=StartMonitoring.ps1
 
 https://stephenmann.io/post/continuous-delivery-with-beanstalk-codepipeline-and-terraform/
 http://microservices.today/CI-CD-Solution-with-AWS/
+
+https://www.codejava.net/frameworks/spring/spring-boot/spring-boot-crud-example-with-spring-mvc-spring-data-jpa-thymeleaf-hibernate-mysql
