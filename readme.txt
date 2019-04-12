@@ -8,3 +8,4 @@ http://microservices.today/CI-CD-Solution-with-AWS/
 
 https://www.codejava.net/frameworks/spring/spring-boot/spring-boot-crud-example-with-spring-mvc-spring-data-jpa-thymeleaf-hibernate-mysql
 https://dzone.com/articles/best-performance-practices-for-hibernate-5-and-spr
+https://www.logicbig.com/tutorials/spring-framework/spring-web-mvc/spring-message-body.html#id-res-status
