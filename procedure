@@ -1,0 +1,26 @@
+CREATE DEFINER=`lovlonadmin`@`%` PROCEDURE `user_workflow`(
+ INOUT user_id INT,
+ OUT MODULE VARCHAR(100)
+)
+BEGIN
+SELECT IFNULL( (select ID from lovlon_user where id=user_id) ,'NA') as USERID INTO user_id;
+ IF(user_id='NA') THEN
+       SET MODULE = 'USER';
+    ELSE
+       SET MODULE = 'user_profile';
+    END IF;
+ SELECT MODULE;
+END
+
+
+------------------------
+
+SELECT IFNULL( (select ID from lovlon_user where id='1043') ,'NA') as USERID,'USER' as MODULE
+union all
+SELECT IFNULL( (select USER_ID from lovlon_user_profile where user_id='1043') ,'NA') as USERID,'USER_PROFILE' as MODULE
+union all
+SELECT IFNULL( (select USER_ID from lovlon_user_requirement where user_id='1043') ,'NA') as USERID, 'USER_REQUIREMENT' as MODULE
+union all
+SELECT IFNULL( (select distinct USER_ID from lovlon_user_images where user_id='1043') ,'NA') as USERID, 'USER_IMAGE' as MODULE
+union all
+SELECT IFNULL( (select distinct USER_ID from lovlon_user_images where user_id='1043' and image_type_id='31' and image_status='A') ,'NA') as USERID, 'IMAGE_APPROVAL' as MODULE;
