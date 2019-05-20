@@ -12,3 +12,5 @@ https://www.logicbig.com/tutorials/spring-framework/spring-web-mvc/spring-messag
 https://www.accenture.com/_acnmedia/PDF-89/Accenture-Unleasing-the-Power-of-AWS-with-AccentureCS.pdf
 https://javadeveloperzone.com/spring/spring-jpa-dynamic-query-example/
 https://issart.com/blog/how-to-use-criteria-api-with-spring-boot/
+https://stackoverflow.com/questions/44278066/how-to-use-criteria-queries-in-spring-boot-data-jpa-application
+https://examples.javacodegeeks.com/enterprise-java/jpa/jpa-criteriabuilder-example/
