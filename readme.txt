@@ -14,3 +14,4 @@ https://javadeveloperzone.com/spring/spring-jpa-dynamic-query-example/
 https://issart.com/blog/how-to-use-criteria-api-with-spring-boot/
 https://stackoverflow.com/questions/44278066/how-to-use-criteria-queries-in-spring-boot-data-jpa-application
 https://examples.javacodegeeks.com/enterprise-java/jpa/jpa-criteriabuilder-example/
+https://www.javacodegeeks.com/2013/04/jpa-2-0-criteria-query-with-hibernate.html
