@@ -15,3 +15,18 @@ https://issart.com/blog/how-to-use-criteria-api-with-spring-boot/
 https://stackoverflow.com/questions/44278066/how-to-use-criteria-queries-in-spring-boot-data-jpa-application
 https://examples.javacodegeeks.com/enterprise-java/jpa/jpa-criteriabuilder-example/
 https://www.javacodegeeks.com/2013/04/jpa-2-0-criteria-query-with-hibernate.html
+
+
+		Protocol protocol = Protocol.http;
+		String distributionDomain = "";
+		File privateKeyFile = new File("");
+		String s3ObjectKey = "1010/32-19-5-2019-753.jpeg";
+		String keyPairId = "";
+		Date dateLessThan=ServiceUtils.parseIso8601Date("2019-05-29T18:30:00.000Z");
+		//Date dateLessThan = DateUtils.formatIso8601Date("2012-11-14T22:20:00.000Z");
+		//Date dateGreaterThan = DateUtils.formatIso8601Date("2011-11-14T22:20:00.000Z");
+
+		String url1 = CloudFrontUrlSigner.getSignedURLWithCannedPolicy(protocol, distributionDomain, privateKeyFile,s3ObjectKey, keyPairId, dateLessThan);
+		
+		System.out.println("URL :: "+url1);
+
