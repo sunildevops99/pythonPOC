@@ -30,3 +30,6 @@ https://www.javacodegeeks.com/2013/04/jpa-2-0-criteria-query-with-hibernate.html
 		
 		System.out.println("URL :: "+url1);
 
+
+### For ubuntu keys for ppa curl command
+https://askubuntu.com/questions/13065/how-do-i-fix-the-gpg-error-no-pubkey
