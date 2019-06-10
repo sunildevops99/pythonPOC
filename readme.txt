@@ -33,3 +33,42 @@ https://www.javacodegeeks.com/2013/04/jpa-2-0-criteria-query-with-hibernate.html
 
 ### For ubuntu keys for ppa curl command
 https://askubuntu.com/questions/13065/how-do-i-fix-the-gpg-error-no-pubkey
+
+node {
+    stage('Repository') {
+        git url: ''
+        sh 'npm install'
+    }
+    stage('Code analyse') {
+        sh 'echo "Run some lints"'
+    }
+    stage('Unit test') {
+        sh 'echo "Tests will back"'
+    }
+    stage('Build') {
+        sh '/usr/lib/node_modules/@angular/cli/bin/ng build'
+    }
+    stage('Bundle the artifacts') {
+        sh 'tar -czvf pep-tool.tar.gz dist/*'
+    }
+    stage('SSH transfer') {
+		
+		script {
+		sshPublisher(
+		   continueOnError: false, failOnError: true,
+		   publishers: [
+			sshPublisherDesc(
+			 configName: "ConfiguredName",
+			 verbose: true,
+			 transfers: [
+			  sshTransfer(
+			   sourceFiles: "*.tar.gz",
+			   removePrefix: "",
+			   remoteDirectory: "",
+			   execCommand: "/home/ubuntu/WEB/angular/uideployment.sh"
+			  )
+			 ])
+		   ])
+		}
+	}
+}
